@@ -25,47 +25,60 @@ keywords = [
     'REMOVER',
     'PRORROGAR',
     'RECONDUZIR',
-    'INSTITUIR'
+    'INSTITUIR',
+    'INSTAURAR'
 ]
-
+tags = ['<p>', '</p>', '<xml>', ]
 
 inf = ['ar', 'AR', 'er', 'ER', 'ir', 'IR', 'or', 'OR', 'ur', 'UR']
+
+inv_char = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII']
 
 def check_upper(text):
 
     upper_words = []
-    target = []
     current_word = ""
-
-    infvar = ['ar', 'AR', 'er', 'ER', 'ir', 'IR', 'or', 'OR', 'ur', 'UR']
 
     for word in text.split():
         if word.isupper():
-            if word[-2:] in infvar:
-                target.append(word)
+            if word in keywords:
                 continue
             else:
-                current_word += word + ' '      
+                current_word += word + ' '
         else:
             if current_word != "":
                 upper_words.append(current_word)
                 current_word = ""
     if current_word != "":
         upper_words.append(current_word)
+    return upper_words
 
 def palavra_destaque(texto):
     tar = []
+    upper = []
+    previous_word_was_upper_case = False
     for word in texto.split():
-        strin = str(word).upper()
-        if strin in keywords:
-            print(word)
-            tar.append(strin)
+        if word.isupper():
+            if word in keywords:
+                print(word)
+                tar.append(word)
+            else:
+                if word not in keywords or not previous_word_was_upper_case:
+                    if previous_word_was_upper_case:
+                        upper[-1] += " " + word
+                    else:
+                        upper.append(word)
+                    previous_word_was_upper_case = True
+                else:
+                    previous_word_was_upper_case = False
+        
         elif '</p><p>' in word:
             word.replace('</p><p>', ' ')
+        elif word in keywords:
+            tar.append(word)
         else:
             continue
-    # print(tar)
-    return tar
+    return tar, upper
 
 def monta_url(url):
     data_index = url.find('data=')
@@ -100,8 +113,8 @@ def puxa_dados(arq):
             escopo = preescopo.replace('</p><p>', ' ')
             pdf = monta_url(root.find('./article').attrib['pdfPage'])
             destaque = palavra_destaque(escopo)
-            # ET.dump(tree)
-            writer.writerow({'Portaria': portaria, 'Orgao': org, 'Destaque': destaque, 'File': file})
+            ET.dump(tree)
+            writer.writerow({'Portaria': escopo, 'Orgao': org, 'Destaque': destaque, 'File': file})
         else:
             continue
         

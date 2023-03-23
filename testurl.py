@@ -1,20 +1,18 @@
-keywords = ['partir']
+text = "This is a TEXT with DESIGNAR BERNARDINHO, some of which are KEYWORDS."
 
-input_string = 'Designar bernardinho, a partir de 1 de julho de 2022'
+keywords = ["KEYWORDS", "SOME"]
 
-for keyword in keywords:
-    if keyword in input_string:
-        start_index = input_string.index(keyword) + len(keyword)
-        for i in range(start_index, len(input_string)):
-            if input_string[i:i+4].isdigit():
-                end_index = i + 4
-                break
+upper_case_words = []
+previous_word_was_upper_case = False
+
+for word in text.split():
+    if word.isupper() and (word not in keywords or not previous_word_was_upper_case):
+        if previous_word_was_upper_case:
+            upper_case_words[-1] += " " + word
         else:
-            end_index = len(input_string)
-        extracted_text = input_string[start_index:end_index]
-        print(extracted_text)
+            upper_case_words.append(word)
+        previous_word_was_upper_case = True
+    else:
+        previous_word_was_upper_case = False
 
-
-
-
-
+print(upper_case_words)

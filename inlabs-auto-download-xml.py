@@ -1,5 +1,7 @@
 from datetime import date
 import requests
+import zipfile
+import os
 
 login = "gab360k@gmail.com"
 senha = "senhateste123"
@@ -9,6 +11,8 @@ tipo_dou="DO2" # Seções separadas por espaço
 
 url_login = "https://inlabs.in.gov.br/logar.php"
 url_download = "https://inlabs.in.gov.br/index.php?p="
+
+directory_FETCH = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\'
 
 payload = {"email" : login, "password" : senha}
 headers = {
@@ -35,14 +39,25 @@ def download():
         url_arquivo = url_download + data_completa + "&dl=" + data_completa + "-" + dou_secao + ".zip"
         cabecalho_arquivo = {'Cookie': 'inlabs_session_cookie=' + cookie, 'origem': '736372697074'}
         response_arquivo = s.request("GET", url_arquivo, headers = cabecalho_arquivo)
+        caminho = directory_FETCH + 'DOUS\\' + data_completa + "-" + dou_secao
         if response_arquivo.status_code == 200:
             with open(data_completa + "-" + dou_secao + ".zip", "wb") as f:
                 f.write(response_arquivo.content)
                 print("Arquivo %s salvo." % (data_completa + "-" + dou_secao + ".zip"))
+                with zipfile.ZipFile(data_completa + "-" + dou_secao + ".zip", 'r') as zip_ref:
+                    if not os.path.exists(caminho):
+                        os.makedirs(caminho)
+                    else:
+                        print('Erro! Pasta Já existe!')
+                    zip_ref.extractall(caminho)
+                    print('Pasta Extraída')
             del response_arquivo
             del f
+            os.remove(directory_FETCH + data_completa + "-" + dou_secao + ".zip")
+            print('Arquivo ZIP em duplicata excluído com Sucesso!')
+            print('Perfeito!')
         elif response_arquivo.status_code == 404:
-            print("Arquivo não encontrado: %s" % (data_completa + "-" + dou_secao + ".zip"))
+            print("Arquivo não encontrado:")
 
     
     print("Aplicação encerrada")
@@ -50,7 +65,7 @@ def download():
 
 def login():
     try:
-        response = s.request("POST", url_login, data=payload, headers=headers, timeout=7)
+        response = s.request("POST", url_login, data=payload, headers=headers, timeout=7, verify=False)
 
         download()
     except requests.exceptions.ConnectionError:
