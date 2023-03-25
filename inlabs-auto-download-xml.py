@@ -1,4 +1,4 @@
-from datetime import date
+import datetime
 import requests
 import zipfile
 import os
@@ -29,9 +29,9 @@ def download():
         exit(37)
     
     # Montagem da URL:
-    ano = date.today().strftime("%Y")
-    mes = date.today().strftime("%m")
-    dia = date.today().strftime("%d")
+    ano = datetime.datetimetoday().strftime("%Y")
+    mes = datetime.datetimetoday().strftime("%m")
+    dia = datetime.datetimetoday().strftime("%d")
     data_completa = ano + "-" + mes + "-" + dia
     
     for dou_secao in tipo_dou.split(' '):
@@ -64,12 +64,15 @@ def download():
     exit(0)
 
 def login():
-    try:
-        response = s.request("POST", url_login, data=payload, headers=headers, timeout=7, verify=False)
+    if datetime.datetime.today().weekday() not in [5,6]:
+        try:
+            response = s.request("POST", url_login, data=payload, headers=headers, timeout=7, verify=False)
 
-        download()
-    except requests.exceptions.ConnectionError:
-        login()
+            download()
+        except requests.exceptions.ConnectionError:
+            login()
+    else:
+        print('Não há edição do DOU disponivel em finais de semana!')
 login()
 
 

@@ -4,7 +4,7 @@ import csv
 
 
 directory = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-20-DO2\\529_20230320_20432158.xml'
-dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-20-DO2'
+dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-22-DO2'
 url_pad_pdf = 'https://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?'
 
 keywords = [
@@ -19,7 +19,6 @@ keywords = [
     'DURANTE',
     'TORNAR',
     'CEDER',
-    'CONVALIDADOS',
     'FICANDO',
     'TORNANDO',
     'REMOVER',
@@ -31,11 +30,12 @@ keywords = [
 tags = ['<p>', '</p>', '<xml>', ]
 
 inf = ['ar', 'AR', 'er', 'ER', 'ir', 'IR', 'or', 'OR', 'ur', 'UR']
-
+referencia = {'Vacância': ['Declarar vago', 'posse', 'vacância'], 'Designação/Dispensa': ['DESIGNAR', 'DISPENSAR', 'SUBSTITUIR']}
+desig = ['DESIGNAR', 'Designar', 'DISPENSAR', 'Dispensar', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
 inv_char = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII']
+comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'comissao', 'SINDICÂNCIA', 'Sindicância', 'SINDICANCIA', 'Sindicancia', 'sindicancia', 'sindicância']
 
 def check_upper(text):
-
     upper_words = []
     current_word = ""
 
@@ -53,13 +53,30 @@ def check_upper(text):
         upper_words.append(current_word)
     return upper_words
 
+
+def check_desig(text):
+    words = text.split()
+    result = {}
+    for word in words:
+        if word in desig and all(forbidden not in words for forbidden in comissao):
+            index = text.find(word)
+            result[word] = text[index+len(word):text.find(",", index)].strip()
+            return result
+    return None
+            
+
 def palavra_destaque(texto):
     tar = []
+    classe = ''
     upper = []
     previous_word_was_upper_case = False
     for word in texto.split():
+        # for key, values in referencia.items():
+        #     if word in values:
+        #         classe = key
+        #         print(classe)
         if word.isupper():
-            if word in keywords:
+            if word in desig:
                 print(word)
                 tar.append(word)
             else:
@@ -72,13 +89,13 @@ def palavra_destaque(texto):
                 else:
                     previous_word_was_upper_case = False
         
-        elif '</p><p>' in word:
-            word.replace('</p><p>', ' ')
-        elif word in keywords:
+        # elif '</p><p>' in word:
+        #     word.replace('</p><p>', ' ')
+        elif word in desig:
             tar.append(word)
         else:
             continue
-    return tar, upper
+    return tar
 
 def monta_url(url):
     data_index = url.find('data=')
@@ -99,31 +116,30 @@ def monta_url(url):
     return url_comp
 
 def puxa_dados(arq):
-
     tree = ET.parse(arq)
     root = tree.getroot()
 
     for child in root:
-
         org = root.find('./article').attrib['artCategory']
-        
         if 'Controladoria-Geral da União' in org:
             portaria = (child[0][0].text)
             preescopo = (child[0][5].text)
             escopo = preescopo.replace('</p><p>', ' ')
+            # print(escopo)
             pdf = monta_url(root.find('./article').attrib['pdfPage'])
-            destaque = palavra_destaque(escopo)
-            ET.dump(tree)
-            writer.writerow({'Portaria': escopo, 'Orgao': org, 'Destaque': destaque, 'File': file})
+            destaque = check_desig(escopo)
+            if destaque:
+                    print(f'destaque: {destaque}')
+                    # ET.dump(tree)
+                    writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque})
         else:
             continue
-        
 
     
 with open('result.csv', 'a', newline='') as f:
-
-    headers = ['Portaria', 'Orgao', 'Destaque', 'File']
+    headers = ['Escopo', 'Orgao', 'Destaque', 'File']
     writer = csv.DictWriter(f, fieldnames=headers)
+    writer.writeheader()
 
     for file in os.listdir(dou):
         current = os.open((os.path.join(dou, file)), os.O_RDONLY)
@@ -131,3 +147,4 @@ with open('result.csv', 'a', newline='') as f:
 
         
 
+## PRÓXIMAAA: catch FCE, FG

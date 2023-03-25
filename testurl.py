@@ -1,18 +1,13 @@
-text = "This is a TEXT with DESIGNAR BERNARDINHO, some of which are KEYWORDS."
+desig = ['DESIGNAR', 'Designar', 'DISPENSAR', 'Dispensar', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
+comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'SINDICÂNCIA', 'Sindicância', 'SINDICANCIA', 'Sindicancia']
 
-keywords = ["KEYWORDS", "SOME"]
+def check_desig(text):
+    
+    words = text.split()  # split text into a list of words
+    for word in words:
+        if word in desig and all(forbidden not in words for forbidden in comissao):
+            return word
+    return None
 
-upper_case_words = []
-previous_word_was_upper_case = False
 
-for word in text.split():
-    if word.isupper() and (word not in keywords or not previous_word_was_upper_case):
-        if previous_word_was_upper_case:
-            upper_case_words[-1] += " " + word
-        else:
-            upper_case_words.append(word)
-        previous_word_was_upper_case = True
-    else:
-        previous_word_was_upper_case = False
-
-print(upper_case_words)
+print(check_desig('Designar minha rola na'))
