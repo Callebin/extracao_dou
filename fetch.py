@@ -4,7 +4,7 @@ import csv
 
 
 directory = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-20-DO2\\529_20230320_20432158.xml'
-dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-22-DO2'
+dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-24-DO2'
 url_pad_pdf = 'https://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?'
 
 keywords = [
@@ -27,13 +27,11 @@ keywords = [
     'INSTITUIR',
     'INSTAURAR'
 ]
-tags = ['<p>', '</p>', '<xml>', ]
-
-inf = ['ar', 'AR', 'er', 'ER', 'ir', 'IR', 'or', 'OR', 'ur', 'UR']
 referencia = {'Vacância': ['Declarar vago', 'posse', 'vacância'], 'Designação/Dispensa': ['DESIGNAR', 'DISPENSAR', 'SUBSTITUIR']}
-desig = ['DESIGNAR', 'Designar', 'DISPENSAR', 'Dispensar', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
-inv_char = ['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII']
+desig = ['DESIGNAR', 'Designar', 'DISPENSAR', 'Dispensar','Dispensar,', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
 comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'comissao', 'SINDICÂNCIA', 'Sindicância', 'SINDICANCIA', 'Sindicancia', 'sindicancia', 'sindicância']
+cod_funcao = ['FCE','CCE','FG','FCT','DAS','FCPE']
+ficando = ['Ficando dispensado', 'ficando dispensado', 'Ficando dispensada', 'ficando dispensada']
 
 def check_upper(text):
     upper_words = []
@@ -57,45 +55,29 @@ def check_upper(text):
 def check_desig(text):
     words = text.split()
     result = {}
+    c = 0
+    f = 0
     for word in words:
         if word in desig and all(forbidden not in words for forbidden in comissao):
             index = text.find(word)
             result[word] = text[index+len(word):text.find(",", index)].strip()
+            for cod in cod_funcao:
+                if cod in text:
+                    indexcod = text.find(cod)
+                    codigo = cod + text[indexcod+len(cod):indexcod+len(cod)+5]
+                    result['Código'] = codigo
+                    c += 1
+                elif c == 0:
+                    result['Código'] = 'Não encontrado!'
+            for dis in ficando:
+                if dis in text:
+                    result['Ficando Dispensado'] = True
+                    f +=1
+                elif f == 0:
+                    result['Ficando Dispensado'] = False
             return result
     return None
             
-
-def palavra_destaque(texto):
-    tar = []
-    classe = ''
-    upper = []
-    previous_word_was_upper_case = False
-    for word in texto.split():
-        # for key, values in referencia.items():
-        #     if word in values:
-        #         classe = key
-        #         print(classe)
-        if word.isupper():
-            if word in desig:
-                print(word)
-                tar.append(word)
-            else:
-                if word not in keywords or not previous_word_was_upper_case:
-                    if previous_word_was_upper_case:
-                        upper[-1] += " " + word
-                    else:
-                        upper.append(word)
-                    previous_word_was_upper_case = True
-                else:
-                    previous_word_was_upper_case = False
-        
-        # elif '</p><p>' in word:
-        #     word.replace('</p><p>', ' ')
-        elif word in desig:
-            tar.append(word)
-        else:
-            continue
-    return tar
 
 def monta_url(url):
     data_index = url.find('data=')
@@ -115,6 +97,7 @@ def monta_url(url):
     url_comp = url_pad_pdf + jornal + '&' + pagina + '&' + data
     return url_comp
 
+
 def puxa_dados(arq):
     tree = ET.parse(arq)
     root = tree.getroot()
@@ -131,7 +114,7 @@ def puxa_dados(arq):
             if destaque:
                     print(f'destaque: {destaque}')
                     # ET.dump(tree)
-                    writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque})
+                    writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
         else:
             continue
 
@@ -147,4 +130,9 @@ with open('result.csv', 'a', newline='') as f:
 
         
 
-## PRÓXIMAAA: catch FCE, FG
+## PRÓXIMAAA:
+    # Ficando dispensado
+    # Exoneração e Vacância
+    # Afastamentos
+    # PAD   
+    # Retificação

@@ -29,11 +29,11 @@ def download():
         exit(37)
     
     # Montagem da URL:
-    ano = datetime.datetimetoday().strftime("%Y")
-    mes = datetime.datetimetoday().strftime("%m")
-    dia = datetime.datetimetoday().strftime("%d")
+    ano = datetime.datetime.today().strftime("%Y")
+    mes = datetime.datetime.today().strftime("%m")
+    dia = datetime.datetime.today().strftime("%d")
     data_completa = ano + "-" + mes + "-" + dia
-    
+    data_completa = '2023-03-24'
     for dou_secao in tipo_dou.split(' '):
         print("Aguarde Download...")
         url_arquivo = url_download + data_completa + "&dl=" + data_completa + "-" + dou_secao + ".zip"
@@ -55,7 +55,6 @@ def download():
             del f
             os.remove(directory_FETCH + data_completa + "-" + dou_secao + ".zip")
             print('Arquivo ZIP em duplicata excluído com Sucesso!')
-            print('Perfeito!')
         elif response_arquivo.status_code == 404:
             print("Arquivo não encontrado:")
 
