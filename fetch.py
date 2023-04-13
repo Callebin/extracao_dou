@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 import os
 import csv
+from baixa_pdf import download_pdf
 
-
-directory = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-20-DO2\\529_20230320_20432158.xml'
-dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-24-DO2'
+directory = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-04-11-DO2\\529_20230320_20432158.xml'
+dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-28-DO2'
 url_pad_pdf = 'https://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?'
 
 keywords = [
@@ -28,7 +28,7 @@ keywords = [
     'INSTAURAR'
 ]
 referencia = {'Vacância': ['Declarar vago', 'posse', 'vacância'], 'Designação/Dispensa': ['DESIGNAR', 'DISPENSAR', 'SUBSTITUIR']}
-desig = ['DESIGNAR', 'Designar', 'DISPENSAR', 'Dispensar','Dispensar,', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
+desig = ['DESIGNAR','DESIGNAR,', 'Designar', 'DISPENSAR', 'Dispensar','Dispensar,', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
 comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'comissao', 'SINDICÂNCIA', 'Sindicância', 'SINDICANCIA', 'Sindicancia', 'sindicancia', 'sindicância']
 cod_funcao = ['FCE','CCE','FG','FCT','DAS','FCPE']
 ficando = ['Ficando dispensado', 'ficando dispensado', 'Ficando dispensada', 'ficando dispensada']
@@ -112,9 +112,11 @@ def puxa_dados(arq):
             pdf = monta_url(root.find('./article').attrib['pdfPage'])
             destaque = check_desig(escopo)
             if destaque:
-                    print(f'destaque: {destaque}')
-                    # ET.dump(tree)
-                    writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
+                print(f'destaque: {destaque}')
+                nome_arquivo = list(destaque.values())[0]
+                download_pdf(pdf, nome_arquivo, escopo)
+                # ET.dump(tree)
+            writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
         else:
             continue
 
@@ -131,8 +133,14 @@ with open('result.csv', 'a', newline='') as f:
         
 
 ## PRÓXIMAAA:
-    # Ficando dispensado
+    # Datas designações
+    # Presidência
+    # Tornar sem efeito
+    # Retificar
+    # Marcar pdf
+    # Edicação Extra
     # Exoneração e Vacância
     # Afastamentos
-    # PAD   
+    # PAD
     # Retificação
+
