@@ -9,15 +9,13 @@ def highlight(pdf, escopopo, nome):
             annot = page.add_highlight_annot(inst)
             annot.update()
     pdfIn.save(f'{nome}.pdf')
-
-
-def download_pdf(lnk, nome_arq=None, escopo=None):
     
+
+def download_pdf(lnk, nome_arq=None, escopo=None): 
     from selenium import webdriver
     from time import sleep
     import shutil
     import os
-    import fitz
 
     index = lnk.find('jornal')
     extracted_url = lnk[index:]
@@ -56,39 +54,31 @@ def download_pdf(lnk, nome_arq=None, escopo=None):
         if nome_arq is not None:
             filename = min([download_folder + f for f in os.listdir(download_folder)],key=os.path.getctime)
             shutil.move(filename,os.path.join(download_folder,r"{}.pdf".format(nome_arq)))
+            highlight(new_file, escopo, nome_arq)
         # Rename all existing files if there is more than one file
 
     elif len(files) > 1:
-        os.rename(old_file,new_file)
+        if os.path.exists(new_file):
+
+            file_name, file_ext = os.path.splitext(new_file)
+            counter = 1
+            while os.path.exists(f"{file_name} ({counter}){file_ext}"):
+                counter += 1
+            file_path = f"{file_name} ({counter}){file_ext}"
+            os.rename(old_file,file_path)
+            highlight(file_path, escopo, nome_arq)
+        else:
+            os.rename(old_file,new_file)
+            highlight(new_file, escopo, nome_arq)
+
     driver.close()
 
-    highlight(new_file, escopo, nome_arq)
-
+    
+    baixado = download_folder + f"{nome_arq}.pdf"
+    marcado = current + f"{nome_arq}.pdf"
+    os.replace(marcado, baixado)
     
 
-
-# pdfzao = "C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\PDFs\\NATHALIA STEFANY DE ARAUJO UCHOA.pdf"
-
-# download_pdf(pdfzao, 'jorge', 'NATHALIA STEFANY')
-# def highlight(pdf, escopo):
-#     import fitz
-#     pdfIn = fitz.open(pdf)
-
-#     for page in pdfIn:
-#         print(page)
-#         text_instances = page.search_for(escopo)
-        
-
-#         print(text_instances)  
-
-#         # iterate through each instance for highlighting
-#         for inst in text_instances:
-#             annot = page.add_highlight_annot(inst)
-#             annot.update()
-#     pdfIn.save('Nath Barraqueira.pdf')
-
-
-    ## HIGHLIGHTS ##
 
 
 

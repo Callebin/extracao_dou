@@ -4,29 +4,10 @@ import csv
 from baixa_pdf import download_pdf
 
 directory = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-04-11-DO2\\529_20230320_20432158.xml'
-dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-03-28-DO2'
+dou = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\DOUS\\2023-05-02-DO2'
 url_pad_pdf = 'https://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp?'
 
-keywords = [
-    'CONCEDER',
-    'DISPENSAR',
-    'DESIGNAR',
-    'APLICAR',
-    'REVERTER',
-    'SUBSTITUIR',
-    'CONVALIDADOS',
-    'PARTIR',
-    'DURANTE',
-    'TORNAR',
-    'CEDER',
-    'FICANDO',
-    'TORNANDO',
-    'REMOVER',
-    'PRORROGAR',
-    'RECONDUZIR',
-    'INSTITUIR',
-    'INSTAURAR'
-]
+
 referencia = {'Vacância': ['Declarar vago', 'posse', 'vacância'], 'Designação/Dispensa': ['DESIGNAR', 'DISPENSAR', 'SUBSTITUIR']}
 desig = ['DESIGNAR','DESIGNAR,', 'Designar', 'DISPENSAR', 'Dispensar','Dispensar,', 'SUBSTITUIR', 'Substituir', 'NOMEAR', 'Nomear']
 comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'comissao', 'SINDICÂNCIA', 'Sindicância', 'SINDICANCIA', 'Sindicancia', 'sindicancia', 'sindicância']
@@ -106,17 +87,17 @@ def puxa_dados(arq):
         org = root.find('./article').attrib['artCategory']
         if 'Controladoria-Geral da União' in org:
             portaria = (child[0][0].text)
-            preescopo = (child[0][5].text)
-            escopo = preescopo.replace('</p><p>', ' ')
-            # print(escopo)
+            escopo = (child[0][5].text).replace('</p><p>', ' ')
             pdf = monta_url(root.find('./article').attrib['pdfPage'])
             destaque = check_desig(escopo)
             if destaque:
-                print(f'destaque: {destaque}')
+                print(destaque)
+
                 nome_arquivo = list(destaque.values())[0]
-                download_pdf(pdf, nome_arquivo, escopo)
-                # ET.dump(tree)
-            writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
+                start = escopo.find(list(destaque.keys())[0])
+                end = escopo.find("Controladoria-Geral da União") + len("Controladoria-Geral da União")
+                download_pdf(pdf, nome_arquivo, escopo[start:end])
+                writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
         else:
             continue
 
@@ -137,10 +118,8 @@ with open('result.csv', 'a', newline='') as f:
     # Presidência
     # Tornar sem efeito
     # Retificar
-    # Marcar pdf
-    # Edicação Extra
+    # Edição Extra
     # Exoneração e Vacância
     # Afastamentos
     # PAD
-    # Retificação
 
