@@ -34,7 +34,7 @@ def download():
     dia = datetime.datetime.today().strftime("%d")
     data_completa = ano + "-" + mes + "-" + dia
 
-    data_completa = '2023-05-02'    
+    # data_completa = '2023-05-02'    
     
     for dou_secao in tipo_dou.split(' '):
         print("Aguarde Download...")
