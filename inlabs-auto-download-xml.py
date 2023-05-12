@@ -3,10 +3,7 @@ import requests
 import zipfile
 import os
 
-login = "gab360k@gmail.com"
-senha = "senhateste123"
-
-tipo_dou="DO2 DO2E" # Seções separadas por espaço
+tipo_dou="DO1 DO2 DO3 DO1E DO2E DO3E" # Seções separadas por espaço
 # Opções DO1 DO2 DO3 DO1E DO2E DO3E
 
 url_login = "https://inlabs.in.gov.br/logar.php"

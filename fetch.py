@@ -14,24 +14,6 @@ comissao = ['COMISSÃO', 'Comissão', 'comissão', 'COMISSAO', 'Comissao', 'comi
 cod_funcao = ['FCE','CCE','FG','FCT','DAS','FCPE']
 ficando = ['Ficando dispensado', 'ficando dispensado', 'Ficando dispensada', 'ficando dispensada']
 
-def check_upper(text):
-    upper_words = []
-    current_word = ""
-
-    for word in text.split():
-        if word.isupper():
-            if word in keywords:
-                continue
-            else:
-                current_word += word + ' '
-        else:
-            if current_word != "":
-                upper_words.append(current_word)
-                current_word = ""
-    if current_word != "":
-        upper_words.append(current_word)
-    return upper_words
-
 
 def check_desig(text):
     words = text.split()
