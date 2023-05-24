@@ -2,14 +2,18 @@ import datetime
 import requests
 import zipfile
 import os
+import warnings
+import config as cf
 
-
+login = cf.login
+senha = cf.senha
 
 tipo_dou="DO1 DO2 DO3 DO1E DO2E DO3E" # Seções separadas por espaço
 # Opções DO1 DO2 DO3 DO1E DO2E DO3E
 
 url_login = "https://inlabs.in.gov.br/logar.php"
 url_download = "https://inlabs.in.gov.br/index.php?p="
+warnings.filterwarnings("ignore", category=requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 directory_FETCH = 'C:\\Users\\gab36\\OneDrive\\Documentos\\Development\\FetchDOU\\'
 
@@ -18,6 +22,7 @@ headers = {
     "Content-Type": "application/x-www-form-urlencoded",    
     "Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     }
+
 s = requests.Session()
 
 def download():
