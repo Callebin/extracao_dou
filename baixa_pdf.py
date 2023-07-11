@@ -1,16 +1,16 @@
-import fitz
+# import fitz
 
 
-def highlight(pdf, escopopo, nome):
-    pdfIn = fitz.open(pdf)
+# def highlight(pdf, escopopo, nome):
+#     pdfIn = fitz.open(pdf)
 
-    for page in pdfIn:
-        text_instances = page.search_for(escopopo)
-        # iterate through each instance for highlighting
-        for inst in text_instances:
-            annot = page.add_highlight_annot(inst)
-            annot.update()
-    pdfIn.save(f"{nome}.pdf")
+#     for page in pdfIn:
+#         text_instances = page.search_for(escopopo)
+#         # iterate through each instance for highlighting
+#         for inst in text_instances:
+#             annot = page.add_highlight_annot(inst)
+#             annot.update()
+#     pdfIn.save(f"{nome}.pdf")
 
 
 def download_pdf(lnk, nome_arq=None, escopo=None):
@@ -46,7 +46,7 @@ def download_pdf(lnk, nome_arq=None, escopo=None):
     chromedriver = "C:\\webdrivers\\chromedriver.exe"
     driver = webdriver.Chrome(executable_path=chromedriver, options=options)
 
-    print("Downloading file from link: {}".format(lnk))
+    print(f"Downloading file from link: {lnk}")
 
     driver.get(viewer_url)
     sleep(1)
@@ -68,7 +68,7 @@ def download_pdf(lnk, nome_arq=None, escopo=None):
             shutil.move(
                 filename, os.path.join(download_folder, r"{}.pdf".format(nome_arq))
             )
-            highlight(new_file, escopo, nome_arq)
+            # highlight(new_file, escopo, nome_arq)
         # Rename all existing files if there is more than one file
 
     elif len(files) > 1:
@@ -79,10 +79,10 @@ def download_pdf(lnk, nome_arq=None, escopo=None):
                 counter += 1
             file_path = f"{file_name} ({counter}){file_ext}"
             os.rename(old_file, file_path)
-            highlight(file_path, escopo, nome_arq)
+            # highlight(file_path, escopo, nome_arq)
         else:
             os.rename(old_file, new_file)
-            highlight(new_file, escopo, nome_arq)
+            # highlight(new_file, escopo, nome_arq)
 
     driver.close()
 

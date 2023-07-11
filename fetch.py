@@ -79,7 +79,7 @@ def puxa_dados(arq):
                 nome_arquivo = list(destaque.values())[0]
                 start = escopo.find(list(destaque.keys())[0])
                 end = escopo.find("Controladoria-Geral da União") + len("Controladoria-Geral da União")
-                download_pdf(pdf, nome_arquivo, escopo[start:end])
+                # download_pdf(pdf, nome_arquivo, escopo[start:end])
                 writer.writerow({'Escopo': portaria, 'Orgao': org, 'Destaque': destaque, 'File': pdf})
         else:
             continue

@@ -65,6 +65,7 @@ def puxa_dados(arq):
                 link = monta_url(root.find("./article").attrib["pdfPage"])
                 if "Controladoria-Geral da União" in org:
                     destaque = gh.prioritize_string(tratado)
+                    print(destaque)
                 else:
                     destaque = gh.prioritize_external(tratado)
                     if destaque == None:
@@ -91,4 +92,4 @@ for portaria, org, destaque, link in objeto:
     pdf.add_port(portaria, org, destaque, link)
 
 
-pdf.output("V1.pdf", "F")
+# pdf.output("V1.pdf", "F")

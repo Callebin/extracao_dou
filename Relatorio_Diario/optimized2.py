@@ -71,6 +71,7 @@ class DOUParser:
                         destaque = self.high.prioritize_string(tratado)
                     else:
                         destaque = self.high.prioritize_external(tratado)
+
                         if destaque is None:
                             break
                     self.objeto.append([portaria, org, destaque, link])
