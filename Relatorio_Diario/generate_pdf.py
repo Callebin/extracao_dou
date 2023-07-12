@@ -10,6 +10,7 @@ class Gerador(FPDF):
         self.set_auto_page_break(True, margin=10)
         self.add_page()
         self.set_font("Arial", "B", 16)
+        self.set_fill_color(26, 4, 136)
         self.cell(0, 10, "Extração Diária DOU - CGU", 0, 1, "C")
         self.ln()
         self.set_font("Arial", "", 12)

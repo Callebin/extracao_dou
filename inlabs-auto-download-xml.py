@@ -8,7 +8,7 @@ import config as cf
 login = cf.login
 senha = cf.senha
 
-tipo_dou = "DO2"  # Seções separadas por espaço
+tipo_dou = "DO1 DO2 DO3 DO1E DO2E DO3E"  # Seções separadas por espaço
 # Opções DO1 DO2 DO3 DO1E DO2E DO3E
 
 url_login = "https://inlabs.in.gov.br/logar.php"
