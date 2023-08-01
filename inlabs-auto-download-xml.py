@@ -102,8 +102,8 @@ def login():
     else:
         print("Não há edição do DOU disponivel em finais de semana!")
 
-
 login()
 
+os.system('cmd /c "python -W ignore inlabs-auto-download-xml.py"')
 
 # python -W ignore inlabs-auto-download-xml.py

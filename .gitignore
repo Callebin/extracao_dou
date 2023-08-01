@@ -5,3 +5,5 @@ config.py
 /DOUS
 /PDFs
 /relatorio_diario/__pycache__
+/result.csv
+/deleta_dous.py
